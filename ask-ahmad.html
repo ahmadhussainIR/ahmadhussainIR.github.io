@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ask Ahmad | Ahmad Hussain, MD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+    <div class="system-bar">
+        <a class="console-id" href="index.html"><span class="status-light"></span><span>AHMAD HUSSAIN / IR CONSOLE</span></a>
+        <div class="system-readout">
+            <span>BWH / HMS</span>
+            <span><strong>ONLINE</strong></span>
+            <span>ASK AHMAD</span>
+        </div>
+    </div>
+    <div class="nav-wrap">
+        <div class="nav-inner">
+            <a class="brand" href="index.html" aria-label="Ahmad Hussain home">
+                <span class="brand-mark">AH</span>
+                <span class="brand-text"><strong>Ahmad Hussain, MD</strong><span>Interventional Radiology</span></span>
+            </a>
+            <nav class="nav-links" aria-label="Primary navigation">
+                <a href="index.html">About</a>
+                <a href="research.html">Research</a>
+                <a href="experience.html">Experience</a>
+                <a href="publications.html">Publications</a>
+                <a href="ask-ahmad.html" class="active">Ask Ahmad</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main class="page-shell">
+    <section class="page-title">
+        <div class="kicker">Student guidance console</div>
+        <h1>Ask Ahmad</h1>
+        <p class="page-intro">
+            Practical guidance for students building research momentum, preparing for USMLE exams, and exploring radiology or interventional radiology careers.
+        </p>
+    </section>
+
+    <section class="section-block" id="guidance">
+        <div class="section-kicker">Roadmap</div>
+        <h2>Research, USMLE &amp; Career Guidance</h2>
+        <div class="guidance-grid">
+            <article class="guidance-card">
+                <div class="card-code">GUIDE-01</div>
+                <h3>Research Guidance</h3>
+                <p>Project selection, literature reviews, abstracts, manuscripts, data analysis, and how to turn early ideas into publishable work.</p>
+            </article>
+            <article class="guidance-card">
+                <div class="card-code">GUIDE-02</div>
+                <h3>USMLE Guidance</h3>
+                <p>Study planning, resource selection, timeline building, and balancing board preparation with clinical rotations and research.</p>
+            </article>
+            <article class="guidance-card">
+                <div class="card-code">GUIDE-03</div>
+                <h3>Career Guidance</h3>
+                <p>Radiology exposure, mentorship, electives, CV building, networking, and developing a focused application narrative.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="section-block" id="ask-ahmad">
+        <section class="chatbot-panel" aria-labelledby="ask-ahmad-title">
+            <div class="chatbot-header">
+                <div>
+                    <div class="section-kicker">Student Q&amp;A console</div>
+                    <h2 id="ask-ahmad-title">askAhmad</h2>
+                </div>
+                <span class="chatbot-status">READY</span>
+            </div>
+
+            <div class="chat-window" id="askAhmadMessages" aria-live="polite">
+                <div class="chat-message bot">
+                    <strong>askAhmad</strong>
+                    <span>Ask me about research, USMLE prep, radiology electives, publications, CV building, or career planning.</span>
+                </div>
+            </div>
+
+            <div class="prompt-chips" aria-label="Suggested questions">
+                <button type="button" data-question="How do I start research as a medical student?">Start research</button>
+                <button type="button" data-question="How should I plan USMLE preparation?">USMLE plan</button>
+                <button type="button" data-question="How can I build a radiology CV?">Radiology CV</button>
+                <button type="button" data-question="How do I find mentors in radiology?">Find mentors</button>
+            </div>
+
+            <form class="chat-form" id="askAhmadForm">
+                <label class="sr-only" for="askAhmadInput">Ask Ahmad a student guidance question</label>
+                <input id="askAhmadInput" class="chat-input" type="text" placeholder="Ask about research, USMLE, or radiology careers..." autocomplete="off">
+                <button class="chat-submit" type="submit">Ask</button>
+            </form>
+        </section>
+    </section>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-logo"><img src="bwh_logo.png" alt="Brigham and Women's Hospital"></div>
+        <div class="footer-copy">&copy; 2026 Ahmad Hussain, MD</div>
+        <div class="footer-logo"><img src="hms_logo.png" alt="Harvard Medical School"></div>
+    </div>
+</footer>
+<script src="askahmad.js"></script>
+</body>
+</html>
