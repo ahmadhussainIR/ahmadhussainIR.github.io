@@ -1,7 +1,7 @@
 (function () {
   const BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
   const TOPIC = '("musculoskeletal embolization"[Title/Abstract] OR "genicular artery embolization"[Title/Abstract] OR "shoulder artery embolization"[Title/Abstract] OR "musculoskeletal intervention"[Title/Abstract])';
-  const JOURNALS = '("J Vasc Interv Radiol"[jour] OR "Cardiovasc Intervent Radiol"[jour] OR "Radiol Artif Intell"[jour])';
+  const JOURNALS = '("J Vasc Interv Radiol"[jour] OR "Cardiovasc Intervent Radiol"[jour] OR "Radiol Artif Intell"[jour] OR "Radiology"[jour] OR "Radiographics"[jour])';
 
   function date(daysAgo) {
     const value = new Date();
@@ -23,7 +23,16 @@
     const summary = new URL(`${BASE}esummary.fcgi`);
     summary.search = new URLSearchParams({ db: "pubmed", retmode: "json", id: ids.join(",") });
     const summaryData = await fetch(summary).then((response) => response.json());
-    return ids.map((id) => summaryData.result[id]).filter(Boolean);
+    const abstractRequest = new URL(`${BASE}efetch.fcgi`);
+    abstractRequest.search = new URLSearchParams({ db: "pubmed", id: ids.join(","), retmode: "xml" });
+    const abstractXml = await fetch(abstractRequest).then((response) => response.text());
+    const document = new DOMParser().parseFromString(abstractXml, "text/xml");
+    const abstracts = new Map(Array.from(document.querySelectorAll("PubmedArticle")).map((record) => {
+      const id = record.querySelector("PMID")?.textContent;
+      const text = Array.from(record.querySelectorAll("Abstract AbstractText")).map((node) => node.textContent?.trim()).filter(Boolean).join(" ");
+      return [id, text];
+    }));
+    return ids.map((id) => ({ ...summaryData.result[id], abstract: abstracts.get(id) || "" })).filter(Boolean);
   }
 
   function render(target, articles, label) {
@@ -34,7 +43,8 @@
     target.innerHTML = articles.map((article, index) => {
       const authors = (article.authors || []).slice(0, 3).map((author) => author.name).join(", ");
       const citation = [authors, article.source, article.pubdate].filter(Boolean).join(" · ");
-      return `<a class="resource-item" href="https://pubmed.ncbi.nlm.nih.gov/${encodeURIComponent(article.uid)}/" target="_blank" rel="noopener noreferrer"><span>${String(index + 1).padStart(2, "0")}</span><div><h3>${escapeHtml(article.title)}</h3><p>${escapeHtml(citation)}</p></div><b>Read abstract ↗</b></a>`;
+      const abstract = article.abstract ? `<details class="article-abstract"><summary>Abstract</summary><p>${escapeHtml(article.abstract)}</p></details>` : "";
+      return `<article class="resource-item"><span>${String(index + 1).padStart(2, "0")}</span><div><a href="https://pubmed.ncbi.nlm.nih.gov/${encodeURIComponent(article.uid)}/" target="_blank" rel="noopener noreferrer"><h3>${escapeHtml(article.title)}</h3><p>${escapeHtml(citation)}</p></a>${abstract}</div><a class="article-link" href="https://pubmed.ncbi.nlm.nih.gov/${encodeURIComponent(article.uid)}/" target="_blank" rel="noopener noreferrer">PubMed ↗</a></article>`;
     }).join("");
   }
 
