@@ -47,6 +47,9 @@
     }
   }
 
-  load("weeklyArticles", 7, "past week");
-  load("monthlyArticles", 30, "past month");
+  (async function () {
+    await load("weeklyArticles", 7, "past week");
+    await new Promise((resolve) => window.setTimeout(resolve, 400));
+    await load("monthlyArticles", 30, "past month");
+  }());
 }());
