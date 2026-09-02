@@ -2,6 +2,8 @@
   const BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
   const TOPIC = '("musculoskeletal embolization"[Title/Abstract] OR "genicular artery embolization"[Title/Abstract] OR "shoulder artery embolization"[Title/Abstract] OR "musculoskeletal intervention"[Title/Abstract])';
   const JOURNALS = '("J Vasc Interv Radiol"[jour] OR "Cardiovasc Intervent Radiol"[jour] OR "Radiol Artif Intell"[jour] OR "Radiology"[jour] OR "Radiographics"[jour])';
+  const CACHE_KEY = "ahmad-radiology-resources-v1";
+  const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000;
 
   function date(daysAgo) {
     const value = new Date();
@@ -61,7 +63,10 @@
     const weekly = document.getElementById("weeklyArticles");
     const monthly = document.getElementById("monthlyArticles");
     try {
-      const articles = await getArticles(30);
+      const stored = JSON.parse(window.localStorage.getItem(CACHE_KEY) || "null");
+      const cacheIsFresh = stored && Array.isArray(stored.articles) && (Date.now() - stored.savedAt) < CACHE_DURATION;
+      const articles = cacheIsFresh ? stored.articles : await getArticles(30);
+      if (!cacheIsFresh) window.localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), articles }));
       const weekStart = new Date(date(7));
       render(weekly, articles.filter((article) => new Date(article.pubdate) >= weekStart), "past week");
       render(monthly, articles, "past month");
