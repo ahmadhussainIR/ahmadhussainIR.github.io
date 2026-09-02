@@ -48,8 +48,17 @@
   }
 
   (async function () {
-    await load("weeklyArticles", 7, "past week");
-    await new Promise((resolve) => window.setTimeout(resolve, 400));
-    await load("monthlyArticles", 30, "past month");
+    const weekly = document.getElementById("weeklyArticles");
+    const monthly = document.getElementById("monthlyArticles");
+    try {
+      const articles = await getArticles(30);
+      const weekStart = new Date(date(7));
+      render(weekly, articles.filter((article) => new Date(article.pubdate) >= weekStart), "past week");
+      render(monthly, articles, "past month");
+    } catch (error) {
+      const fallback = `<p class="resource-empty">The live reading list is temporarily unavailable. <a href="https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(`${TOPIC} AND ${JOURNALS}`)}" target="_blank" rel="noopener noreferrer">Browse matching articles on PubMed ↗</a></p>`;
+      weekly.innerHTML = fallback;
+      monthly.innerHTML = fallback;
+    }
   }());
 }());
