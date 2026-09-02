@@ -2,7 +2,10 @@
   const BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
   const TOPIC = '("interventional radiology"[Title/Abstract] OR embolization[Title/Abstract] OR musculoskeletal[Title/Abstract] OR "radiology AI"[Title/Abstract])';
   const JOURNALS = '("J Vasc Interv Radiol"[jour] OR "Cardiovasc Intervent Radiol"[jour] OR "Radiol Artif Intell"[jour] OR "Radiology"[jour] OR "Radiographics"[jour])';
-  const CACHE_KEY = "ahmad-radiology-resources-v3";
+  const CURATED_GAE = ["42487072", "42118083", "42567951", "36991094", "37051829"];
+  const CURATED_AI = ["41258794", "38165245", "34136816"];
+  const CURATED_IDS = [...CURATED_GAE, ...CURATED_AI];
+  const CACHE_KEY = "ahmad-radiology-resources-v4";
   const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000;
 
   function date(daysAgo) {
@@ -16,7 +19,8 @@
   }
 
   async function getArticles(daysAgo) {
-    const term = `${TOPIC} AND ${JOURNALS} AND (${date(daysAgo)}[pdat] : ${date(0)}[pdat])`;
+    const curated = CURATED_IDS.map((id) => `${id}[uid]`).join(" OR ");
+    const term = `((${TOPIC}) AND ${JOURNALS} AND (${date(daysAgo)}[pdat] : ${date(0)}[pdat])) OR (${curated})`;
     const search = new URL(`${BASE}esearch.fcgi`);
     search.search = new URLSearchParams({ db: "pubmed", retmode: "json", retmax: "60", sort: "pub date", term });
     const searchData = await fetch(search).then((response) => response.json());
@@ -75,9 +79,12 @@
       const articles = cacheIsFresh ? stored.articles : await getArticles(365);
       if (!cacheIsFresh) window.localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), articles }));
       journals.forEach((journal) => render(document.getElementById(journal.id), articles.filter((article) => article.source === journal.source), journal.label));
+      const gaeArticles = CURATED_GAE.map((id) => articles.find((article) => article.uid === id)).filter(Boolean);
+      render(document.getElementById("gaeArticles"), gaeArticles, "GAE essentials");
     } catch (error) {
       const fallback = `<p class="resource-empty">The live reading list is temporarily unavailable. <a href="https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(`${TOPIC} AND ${JOURNALS}`)}" target="_blank" rel="noopener noreferrer">Browse matching articles on PubMed ↗</a></p>`;
       journals.forEach((journal) => { document.getElementById(journal.id).innerHTML = fallback; });
+      document.getElementById("gaeArticles").innerHTML = fallback;
     }
   }());
 }());
