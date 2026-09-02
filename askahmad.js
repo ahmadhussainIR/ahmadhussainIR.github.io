@@ -47,7 +47,12 @@
         {
             keywords: ["mentor", "mentorship", "network", "connect", "faculty email"],
             response:
-                "Approach mentorship as a professional relationship built through small, reliable contributions. First, identify people whose clinical or research work overlaps with a specific interest of yours. Second, send a short email introducing your current stage, naming the relevant work, and requesting either a brief conversation or advice about one realistic starter task. Attach a one-page CV when appropriate. Third, prepare for the meeting with two or three focused questions and leave with a clearly defined next action. Follow up once after about a week if there is no reply. Once someone helps you, communicate progress, meet deadlines, ask for clarification early, and credit everyone appropriately. A strong mentorship relationship usually grows from consistent work rather than repeated requests for opportunities."
+                "Approach mentorship as a professional relationship built through respect, preparation, and reliable work. Identify people whose clinical or research interests genuinely overlap with yours, then send a brief, individualized email that introduces your current stage, mentions one relevant aspect of their work, and makes one realistic request. Acknowledge that their schedule is busy, make the message easy to answer, and offer flexibility rather than asking them to accommodate a narrow time. Attach a concise CV when appropriate. If they agree to meet, arrive prepared with two or three focused questions, listen carefully, and leave with a clearly defined next step. Follow up once after 7–10 days if there is no response; if they still do not reply, thank them mentally and move on gracefully rather than sending repeated messages. A delayed or absent reply usually reflects limited time, not disrespect. Once a mentor helps you, protect their time by communicating clearly, meeting deadlines, asking for clarification early, reporting progress without being chased, and crediting everyone appropriately. Mentorship grows through consistent contribution, humility, and trust—not entitlement to an opportunity."
+        },
+        {
+            keywords: ["case report", "case presentation", "clinical case", "case write-up"],
+            response:
+                "A strong case report begins with educational value, not rarity alone. Step 1: identify the teaching point—an unusual presentation, diagnostic challenge, unexpected complication, novel treatment use, or important management lesson—and ask a mentor whether it adds meaningfully to the existing literature. Step 2: obtain written patient consent and any required institutional approval before drafting or using images. Remove identifiers and build a precise timeline covering presentation, examination, laboratory findings, imaging, differential diagnosis, intervention, outcome, and follow-up. Step 3: review similar reports, choose a suitable journal early, and follow its exact format. Write a focused introduction, a chronological case description, and a discussion that compares the case with existing evidence and ends with a concise learning point. Use high-quality annotated images only when permission allows, avoid claiming causation or broad effectiveness from one patient, and follow the CARE reporting guideline and checklist. Clarify authorship and responsibilities with the team at the beginning, and have the treating clinicians verify every clinical detail before submission."
         },
         {
             keywords: ["systematic review", "meta-analysis", "literature review"],
@@ -97,7 +102,7 @@
         const body = `Hello Ahmad,\n\nI have a follow-up question from your website:\n\n${question}\n\nThank you.`;
         followUp.className = "chat-follow-up";
         followUp.href = `mailto:ahussain8@bwh.harvard.edu?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        followUp.textContent = "More questions? Email Ahmad directly ↗";
+        followUp.textContent = "More questions? Email Ahmad directly \u2197\uFE0E";
         messages.appendChild(followUp);
         messages.scrollTop = messages.scrollHeight;
     }

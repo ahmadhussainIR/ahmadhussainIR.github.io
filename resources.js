@@ -147,7 +147,7 @@
 
   function render(target, articles, label, limit = 4) {
     if (!articles.length) {
-      target.innerHTML = `<p class="resource-empty">No new matching papers were indexed this week in ${label}. <a href="https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(`${TOPIC} AND ${JOURNALS}`)}" target="_blank" rel="noopener noreferrer">Browse the journal literature on PubMed ↗</a></p>`;
+      target.innerHTML = `<p class="resource-empty">No new matching papers were indexed this week in ${label}. <a href="https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(`${TOPIC} AND ${JOURNALS}`)}" target="_blank" rel="noopener noreferrer">Browse the journal literature on PubMed \u2197\uFE0E</a></p>`;
       return;
     }
     target.innerHTML = articles.slice(0, limit).map((article, index) => {
@@ -156,7 +156,7 @@
       const abstract = article.abstract || "No abstract is available in PubMed for this article.";
       const doi = (article.articleids || []).find((identifier) => identifier.idtype === "doi")?.value;
       const fullText = doi ? `https://doi.org/${encodeURIComponent(doi)}` : `https://pubmed.ncbi.nlm.nih.gov/${encodeURIComponent(article.uid)}/`;
-      return `<article class="resource-item"><span>${String(index + 1).padStart(2, "0")}</span><div><a href="https://pubmed.ncbi.nlm.nih.gov/${encodeURIComponent(article.uid)}/" target="_blank" rel="noopener noreferrer"><h3>${escapeHtml(article.title)}</h3><p>${escapeHtml(citation)}</p></a><div class="article-abstract"><strong>Abstract</strong><p>${escapeHtml(abstract)}</p></div><div class="article-actions"><a href="https://pubmed.ncbi.nlm.nih.gov/${encodeURIComponent(article.uid)}/" target="_blank" rel="noopener noreferrer">PubMed record ↗</a><a href="${fullText}" target="_blank" rel="noopener noreferrer">Full text ↗</a></div></div></article>`;
+      return `<article class="resource-item"><span>${String(index + 1).padStart(2, "0")}</span><div><a href="https://pubmed.ncbi.nlm.nih.gov/${encodeURIComponent(article.uid)}/" target="_blank" rel="noopener noreferrer"><h3>${escapeHtml(article.title)}</h3><p>${escapeHtml(citation)}</p></a><div class="article-abstract"><strong>Abstract</strong><p>${escapeHtml(abstract)}</p></div><div class="article-actions"><a href="https://pubmed.ncbi.nlm.nih.gov/${encodeURIComponent(article.uid)}/" target="_blank" rel="noopener noreferrer">PubMed record \u2197\uFE0E</a><a href="${fullText}" target="_blank" rel="noopener noreferrer">Full text \u2197\uFE0E</a></div></div></article>`;
     }).join("");
   }
 
@@ -185,7 +185,7 @@
       if (!cacheIsFresh) window.localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), articles }));
       renderAll(articles);
     } catch (error) {
-      const fallback = `<p class="resource-empty">The weekly journal feed is temporarily unavailable. <a href="https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(`${TOPIC} AND ${JOURNALS}`)}" target="_blank" rel="noopener noreferrer">Browse matching articles on PubMed ↗</a></p>`;
+      const fallback = `<p class="resource-empty">The weekly journal feed is temporarily unavailable. <a href="https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(`${TOPIC} AND ${JOURNALS}`)}" target="_blank" rel="noopener noreferrer">Browse matching articles on PubMed \u2197\uFE0E</a></p>`;
       journals.filter((journal) => journal.id !== "raiArticles").forEach((journal) => { document.getElementById(journal.id).innerHTML = fallback; });
     }
   }());
