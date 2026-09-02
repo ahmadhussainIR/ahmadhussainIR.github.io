@@ -1,8 +1,8 @@
 (function () {
   const BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
-  const TOPIC = '("musculoskeletal embolization"[Title/Abstract] OR "genicular artery embolization"[Title/Abstract] OR "shoulder artery embolization"[Title/Abstract] OR "musculoskeletal intervention"[Title/Abstract])';
+  const TOPIC = '("interventional radiology"[Title/Abstract] OR embolization[Title/Abstract] OR musculoskeletal[Title/Abstract] OR "radiology AI"[Title/Abstract])';
   const JOURNALS = '("J Vasc Interv Radiol"[jour] OR "Cardiovasc Intervent Radiol"[jour] OR "Radiol Artif Intell"[jour] OR "Radiology"[jour] OR "Radiographics"[jour])';
-  const CACHE_KEY = "ahmad-radiology-resources-v1";
+  const CACHE_KEY = "ahmad-radiology-resources-v3";
   const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000;
 
   function date(daysAgo) {
@@ -18,7 +18,7 @@
   async function getArticles(daysAgo) {
     const term = `${TOPIC} AND ${JOURNALS} AND (${date(daysAgo)}[pdat] : ${date(0)}[pdat])`;
     const search = new URL(`${BASE}esearch.fcgi`);
-    search.search = new URLSearchParams({ db: "pubmed", retmode: "json", retmax: "6", sort: "pub date", term });
+    search.search = new URLSearchParams({ db: "pubmed", retmode: "json", retmax: "60", sort: "pub date", term });
     const searchData = await fetch(search).then((response) => response.json());
     const ids = searchData.esearchresult.idlist || [];
     if (!ids.length) return [];
@@ -42,11 +42,13 @@
       target.innerHTML = `<p class="resource-empty">No new matching papers were indexed in the ${label}. Browse the journals directly for the wider literature.</p>`;
       return;
     }
-    target.innerHTML = articles.map((article, index) => {
+    target.innerHTML = articles.slice(0, 4).map((article, index) => {
       const authors = (article.authors || []).slice(0, 3).map((author) => author.name).join(", ");
       const citation = [authors, article.source, article.pubdate].filter(Boolean).join(" · ");
-      const abstract = article.abstract ? `<details class="article-abstract"><summary>Abstract</summary><p>${escapeHtml(article.abstract)}</p></details>` : "";
-      return `<article class="resource-item"><span>${String(index + 1).padStart(2, "0")}</span><div><a href="https://pubmed.ncbi.nlm.nih.gov/${encodeURIComponent(article.uid)}/" target="_blank" rel="noopener noreferrer"><h3>${escapeHtml(article.title)}</h3><p>${escapeHtml(citation)}</p></a>${abstract}</div><a class="article-link" href="https://pubmed.ncbi.nlm.nih.gov/${encodeURIComponent(article.uid)}/" target="_blank" rel="noopener noreferrer">PubMed ↗</a></article>`;
+      const abstract = article.abstract || "No abstract is available in PubMed for this article.";
+      const doi = (article.articleids || []).find((identifier) => identifier.idtype === "doi")?.value;
+      const fullText = doi ? `https://doi.org/${encodeURIComponent(doi)}` : `https://pubmed.ncbi.nlm.nih.gov/${encodeURIComponent(article.uid)}/`;
+      return `<article class="resource-item"><span>${String(index + 1).padStart(2, "0")}</span><div><a href="https://pubmed.ncbi.nlm.nih.gov/${encodeURIComponent(article.uid)}/" target="_blank" rel="noopener noreferrer"><h3>${escapeHtml(article.title)}</h3><p>${escapeHtml(citation)}</p></a><div class="article-abstract"><strong>Abstract</strong><p>${escapeHtml(abstract)}</p></div><div class="article-actions"><a href="https://pubmed.ncbi.nlm.nih.gov/${encodeURIComponent(article.uid)}/" target="_blank" rel="noopener noreferrer">PubMed record ↗</a><a href="${fullText}" target="_blank" rel="noopener noreferrer">Full text ↗</a></div></div></article>`;
     }).join("");
   }
 
@@ -60,20 +62,22 @@
   }
 
   (async function () {
-    const weekly = document.getElementById("weeklyArticles");
-    const monthly = document.getElementById("monthlyArticles");
+    const journals = [
+      { id: "jvirArticles", source: "J Vasc Interv Radiol", label: "JVIR" },
+      { id: "cvirArticles", source: "Cardiovasc Intervent Radiol", label: "CVIR" },
+      { id: "radiologyArticles", source: "Radiology", label: "Radiology" },
+      { id: "radiographicsArticles", source: "Radiographics", label: "RadioGraphics" },
+      { id: "raiArticles", source: "Radiol Artif Intell", label: "Radiology: AI" }
+    ];
     try {
       const stored = JSON.parse(window.localStorage.getItem(CACHE_KEY) || "null");
       const cacheIsFresh = stored && Array.isArray(stored.articles) && (Date.now() - stored.savedAt) < CACHE_DURATION;
-      const articles = cacheIsFresh ? stored.articles : await getArticles(30);
+      const articles = cacheIsFresh ? stored.articles : await getArticles(365);
       if (!cacheIsFresh) window.localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), articles }));
-      const weekStart = new Date(date(7));
-      render(weekly, articles.filter((article) => new Date(article.pubdate) >= weekStart), "past week");
-      render(monthly, articles, "past month");
+      journals.forEach((journal) => render(document.getElementById(journal.id), articles.filter((article) => article.source === journal.source), journal.label));
     } catch (error) {
       const fallback = `<p class="resource-empty">The live reading list is temporarily unavailable. <a href="https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(`${TOPIC} AND ${JOURNALS}`)}" target="_blank" rel="noopener noreferrer">Browse matching articles on PubMed ↗</a></p>`;
-      weekly.innerHTML = fallback;
-      monthly.innerHTML = fallback;
+      journals.forEach((journal) => { document.getElementById(journal.id).innerHTML = fallback; });
     }
   }());
 }());
