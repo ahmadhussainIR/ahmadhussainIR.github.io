@@ -2,10 +2,10 @@
   const BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
   const TOPIC = '("interventional radiology"[Title/Abstract] OR embolization[Title/Abstract] OR musculoskeletal[Title/Abstract] OR "radiology AI"[Title/Abstract])';
   const JOURNALS = '("J Vasc Interv Radiol"[jour] OR "Cardiovasc Intervent Radiol"[jour] OR "Radiol Artif Intell"[jour] OR "Radiology"[jour] OR "Radiographics"[jour])';
-  const CURATED_GAE = ["42487072", "42118083", "42567951", "36991094", "37051829"];
+  const CURATED_GAE = ["42487072", "42118083", "42303879", "42567951", "36991094", "37051829"];
   const CURATED_AI = ["41879561", "41258794", "34136816"];
   const CURATED_IDS = [...CURATED_GAE, ...CURATED_AI];
-  const CACHE_KEY = "ahmad-radiology-resources-v5";
+  const CACHE_KEY = "ahmad-radiology-resources-v6";
   const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000;
 
   const SEED_ARTICLES = [
@@ -26,6 +26,15 @@
       authors: [{ name: "O Ahmed" }, { name: "B Taslakian" }, { name: "Y Okuno" }],
       articleids: [{ idtype: "doi", value: "10.1016/j.jvir.2026.108803" }],
       abstract: "Knee osteoarthritis is a prevalent musculoskeletal condition characterized by a significant therapeutic gap between the failure of conservative medical therapies and surgical arthroplasty. Contemporary evidence supports a model in which chronic synovitis and pathologic neoangiogenesis, closely coupled to perivascular nociceptive nerve growth, serve as significant contributors of pain and peripheral sensitization in knee osteoarthritis. Genicular artery embolization has emerged as a targeted, joint-preserving vascular intervention performed by interventional radiologists that directly addresses the inflammatory and neurovascular components of knee osteoarthritis. The purpose of this societal-endorsed position statement is to synthesize the current knowledge base for genicular artery embolization and review its biologic rationale, clinical evidence, technical considerations, safety profile, and evolving regulatory landscape."
+    },
+    {
+      uid: "42303879",
+      title: "Outcome and Safety of Genicular Artery Embolization for Knee Osteoarthritis: A Systematic Review and Meta-Analysis",
+      source: "Cardiovasc Intervent Radiol",
+      pubdate: "2026",
+      authors: [{ name: "A T Amin" }, { name: "I E M Safar" }, { name: "R B Trujillo" }],
+      articleids: [{ idtype: "doi", value: "10.1007/s00270-026-04502-7" }],
+      abstract: "This systematic review and meta-analysis evaluated pain and functional outcomes, safety, and differences between embolic agents in genicular artery embolization for knee osteoarthritis. Forty-five studies including 2205 patients were analyzed. Across predominantly uncontrolled studies, clinically relevant improvements were observed, with pooled Visual Analogue Scale reductions of 37.5 points at 1 month and 37.1 points at 12 months. Western Ontario and McMaster Universities Osteoarthritis Index improved by 28.9 points at 1 month, and Knee Injury and Osteoarthritis Outcome Score-Pain by 23.6 points at 6 months. Mean changes exceeded clinically important thresholds. No significant subgroup interaction between permanent and temporary embolic agents was observed. The most frequent adverse events were transient skin discoloration (11%) and hematoma (3%). Overall, the certainty of evidence ranged from very low to low."
     },
     {
       uid: "42567951",
@@ -161,11 +170,11 @@
 
   function renderAll(articles) {
     journals.forEach((journal) => render(document.getElementById(journal.id), articles.filter((article) => article.source === journal.source), journal.label));
-    render(document.getElementById("gaeArticles"), CURATED_GAE.map((id) => articles.find((article) => article.uid === id)).filter(Boolean), "GAE essentials", 5);
+    render(document.getElementById("gaeArticles"), CURATED_GAE.map((id) => articles.find((article) => article.uid === id)).filter(Boolean), "GAE essentials", 6);
   }
 
   const seeds = mergeArticles([], SEED_ARTICLES);
-  render(document.getElementById("gaeArticles"), seeds.filter((article) => CURATED_GAE.includes(article.uid)), "GAE essentials", 5);
+  render(document.getElementById("gaeArticles"), CURATED_GAE.map((id) => seeds.find((article) => article.uid === id)).filter(Boolean), "GAE essentials", 6);
   render(document.getElementById("raiArticles"), seeds.filter((article) => CURATED_AI.includes(article.uid)), "Radiology: AI", 3);
 
   (async function () {
