@@ -96,13 +96,17 @@
         messages.scrollTop = messages.scrollHeight;
     }
 
+    function buildEmailLink(question) {
+        const subject = "Question from Ask Ahmad";
+        const body = `Hello Ahmad,\n\nI have a question from your website:\n\n${question}\n\nThank you.`;
+        return `mailto:ahussain8@bwh.harvard.edu?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    }
+
     function addEmailFollowUp(question) {
         const followUp = document.createElement("a");
-        const subject = "Question from Ask Ahmad";
-        const body = `Hello Ahmad,\n\nI have a follow-up question from your website:\n\n${question}\n\nThank you.`;
         followUp.className = "chat-follow-up";
-        followUp.href = `mailto:ahussain8@bwh.harvard.edu?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        followUp.textContent = "More questions? Email Ahmad directly \u2197\uFE0E";
+        followUp.href = buildEmailLink(question);
+        followUp.textContent = "Send this message to Ahmad \u2197\uFE0E";
         messages.appendChild(followUp);
         messages.scrollTop = messages.scrollHeight;
     }
@@ -115,10 +119,10 @@
             return match.response;
         }
 
-        return "I would approach this in three steps: define the exact goal and your current stage, identify the most relevant mentor or reliable source, and choose one concrete action you can complete this week. Ask a more specific question about USMLE Step 1, Step 2 CK, Step 3, clinical research, data analysis, radiology or IR careers, observership emails, electives, mentorship, publications, CVs, or applications for a detailed answer.";
+        return null;
     }
 
-    function ask(question) {
+    function answerPreset(question) {
         const trimmed = question.trim();
         if (!trimmed) {
             return;
@@ -127,20 +131,28 @@
         addMessage("user", trimmed);
         input.value = "";
 
-        window.setTimeout(() => {
-            addMessage("bot", getAnswer(trimmed));
-            addEmailFollowUp(trimmed);
-        }, 260);
+        const answer = getAnswer(trimmed);
+        if (answer) {
+            window.setTimeout(() => addMessage("bot", answer), 260);
+        }
     }
 
     form.addEventListener("submit", (event) => {
         event.preventDefault();
-        ask(input.value);
+        const question = input.value.trim();
+        if (!question) {
+            return;
+        }
+        addMessage("user", question);
+        addMessage("bot", "Custom questions are not answered automatically. Your email app will open so you can send this directly to Ahmad.");
+        addEmailFollowUp(question);
+        input.value = "";
+        window.location.href = buildEmailLink(question);
     });
 
     chips.forEach((chip) => {
         chip.addEventListener("click", () => {
-            ask(chip.dataset.question || chip.textContent || "");
+            answerPreset(chip.dataset.question || chip.textContent || "");
         });
     });
 }());
