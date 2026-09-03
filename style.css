@@ -12,8 +12,9 @@
 .focus-summary>div{max-width:750px;font:400 clamp(18px,2vw,25px)/1.45 "Manrope";letter-spacing:-.03em}.focus-summary span{white-space:nowrap}.focus-summary i{font-style:normal;color:var(--muted);padding:0 7px}
 
 /* Radiology resources */
+.trainee-roadmap{display:grid;grid-template-columns:280px 1fr;gap:55px;border-top:1px solid var(--ink);padding:38px 0 85px}.trainee-roadmap>.resource-heading h2{font-size:42px;margin-top:25px}.trainee-roadmap>.resource-heading>p:last-child{color:var(--muted);font-size:12px;line-height:1.55}.trainee-roadmap ol{list-style:none;padding:0;margin:0;border-top:1px solid var(--line)}.trainee-roadmap li{display:grid;grid-template-columns:38px 1fr;gap:16px;padding:23px 0;border-bottom:1px solid var(--line)}.trainee-roadmap li>span{font-size:10px;color:var(--muted);padding-top:4px}.trainee-roadmap h3{font:500 19px/1.35 "Manrope";margin:0 0 7px}.trainee-roadmap li p{max-width:720px;color:var(--muted);font-size:13px;line-height:1.6;margin:0}
 .resource-intro{display:grid;grid-template-columns:1fr 3fr;gap:60px;padding:60px 0 100px}.resource-intro>p{margin:0;color:var(--muted);font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase}.resource-intro h2{font-size:clamp(38px,5vw,62px);margin:0 0 25px}.resource-intro div>p{max-width:600px;color:#45443f;font-size:17px;line-height:1.7}.resource-section{display:grid;grid-template-columns:280px 1fr;gap:55px;border-top:1px solid var(--ink);padding:38px 0 85px}.resource-heading h2{font-size:42px;margin-top:25px}.resource-list{border-top:1px solid var(--line)}.resource-item{display:grid;grid-template-columns:35px 1fr auto;gap:20px;align-items:start;padding:25px 0;border-bottom:1px solid var(--line)}.resource-item>span{font-size:10px;color:var(--muted);padding-top:4px}.resource-item h3{font:500 20px/1.35 "Manrope";margin:0 0 8px}.resource-item p{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:0}.resource-item b{font-size:11px;font-weight:600;white-space:nowrap;padding-top:4px}.resource-loading,.resource-empty{color:var(--muted);font-size:14px;line-height:1.6;padding:25px 0;margin:0}.resource-empty a{color:var(--ink);border-bottom:1px solid}.resource-note{display:grid;grid-template-columns:280px 1fr;gap:55px;border-top:1px solid var(--line);padding:30px 0 0;color:var(--muted);font-size:12px;line-height:1.65}.resource-note p{margin:0}.resource-note p:first-child{font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--ink)}
-@media(max-width:800px){.resource-intro,.resource-section,.resource-note{grid-template-columns:1fr;gap:28px}.resource-intro{padding:55px 0 75px}.resource-section{padding-bottom:65px}.resource-item{grid-template-columns:28px 1fr}.resource-item b{grid-column:2;padding-top:0}}
+@media(max-width:800px){.resource-intro,.resource-section,.resource-note,.trainee-roadmap{grid-template-columns:1fr;gap:28px}.resource-intro{padding:55px 0 75px}.resource-section,.trainee-roadmap{padding-bottom:65px}.resource-item{grid-template-columns:28px 1fr}.resource-item b{grid-column:2;padding-top:0}}
 
 .chat-follow-up{display:block;width:max-content;max-width:100%;margin:2px 0 22px;padding-bottom:4px;border-bottom:1px solid var(--ink);font-size:12px;font-weight:600}
 
@@ -82,6 +83,9 @@
   .resource-intro h2{font-size:38px;line-height:1.02}
   .resource-intro div>p{font-size:16px}
   .resource-section{gap:24px;padding:30px 0 60px}
+  .trainee-roadmap{gap:24px;padding:30px 0 60px}
+  .trainee-roadmap>.resource-heading h2{font-size:34px;margin-top:18px}
+  .trainee-roadmap li{grid-template-columns:30px minmax(0,1fr);gap:10px}
   .resource-item{grid-template-columns:38px minmax(0,1fr);gap:12px;padding:21px 0}
   .resource-item h3{font-size:17px}
   .resource-item p{font-size:10px;line-height:1.45;overflow-wrap:anywhere}
