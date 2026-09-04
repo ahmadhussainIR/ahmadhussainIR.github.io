@@ -5,7 +5,8 @@
   <title>Blogs | Ahmad Hussain, MD</title>
   <meta name="description" content="Patient education on embolization, pain and function scores, liver-function scores, and radiology reports by Ahmad Hussain, MD.">
   <link rel="stylesheet" href="style.css?v=19">
-  <style>.blog-meta{margin-top:18px;border-top:1px solid var(--line);padding-top:14px;color:var(--muted);font-size:13px;line-height:1.5}.blog-meta strong{color:var(--ink);font-weight:600}</style>
+  <style>.blog-meta{margin-top:18px;border-top:1px solid var(--line);padding-top:14px;color:var(--muted);font-size:13px;line-height:1.5}.blog-meta strong{color:var(--ink);font-weight:600}.calculator-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:48px}.calculator{background:var(--paper);padding:26px}.calculator h3{font-size:20px;margin:0 0 7px}.calculator>p{font-size:13px;line-height:1.55;color:var(--muted);margin:0 0 22px}.calc-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.calc-fields label{display:flex;flex-direction:column;gap:7px;font-size:12px;color:var(--muted)}.calc-fields input,.calc-fields select{width:100%;min-width:0;border:1px solid var(--line);background:#fff;padding:11px 10px;color:var(--ink);font:inherit;border-radius:0}.calculator button{border:0;background:var(--ink);color:var(--paper);padding:11px 17px;margin-top:17px;font:600 12px Manrope;cursor:pointer}.calc-result{min-height:44px;margin-top:17px!important;padding-top:14px;border-top:1px solid var(--line);color:var(--ink)!important;font-size:14px!important}.calc-result strong{display:block;font-size:20px;margin-bottom:4px}.calculator .calc-source{font-size:11px;border-bottom:1px solid;margin-top:14px;display:inline-block}.calculator-note{font-size:13px;line-height:1.65;color:var(--muted);max-width:760px;margin-bottom:60px}@media(max-width:700px){.calculator-grid{grid-template-columns:1fr}.calculator{padding:22px 18px}.calc-fields{grid-template-columns:1fr 1fr}}
+  </style>
 </head>
 <body>
 <nav class="nav shell"><a class="monogram" href="index.html">AH<span>MD</span></a><div class="navlinks"><a href="index.html">About</a><a href="research.html">Research &amp; Publications</a><a href="featured-reads.html">Featured IR Reads</a><a href="resources.html">IR Resources</a><a href="residency.html">Residency</a><a href="fellowship.html">Fellowship</a><a href="jobs.html">Jobs</a><a class="active" href="patient-guides.html">Blogs</a></div><a class="contact-link" href="ask-ahmad.html">Ask Ahmad &#8599;&#65038;</a></nav>
@@ -22,7 +23,57 @@
     <a href="#pain-scores"><span>04</span><strong>Pain and function scores</strong><small>VAS, NRS, KOOS, WOMAC &amp; SPADI</small></a>
     <a href="#liver-scores"><span>05</span><strong>Liver-function scores</strong><small>Child–Pugh, MELD 3.0 &amp; ALBI</small></a>
     <a href="#imaging-scores"><span>06</span><strong>Numbers in an imaging report</strong><small>LI-RADS &amp; PI-RADS</small></a>
+    <a href="#calculators"><span>07</span><strong>Clinical calculators</strong><small>Four interactive tools</small></a>
   </nav>
+
+  <section id="calculators" class="patient-article" aria-labelledby="calculator-title">
+    <header><p class="section-number">07 / Interactive tools</p><h2 id="calculator-title">Clinical score calculators</h2><p class="article-deck">Calculations run in your browser. Nothing you enter is saved or sent.</p></header>
+    <div>
+      <div class="calculator-grid">
+        <form class="calculator" id="child-pugh-calculator">
+          <h3>Child–Pugh</h3><p>Severity class for cirrhosis using five clinical and laboratory measures.</p>
+          <div class="calc-fields">
+            <label>Encephalopathy<select name="encephalopathy"><option value="1">None</option><option value="2">Grade 1–2</option><option value="3">Grade 3–4</option></select></label>
+            <label>Ascites<select name="ascites"><option value="1">None</option><option value="2">Mild/moderate</option><option value="3">Severe/refractory</option></select></label>
+            <label>Bilirubin<select name="bilirubin"><option value="1">&lt;2 mg/dL</option><option value="2">2–3 mg/dL</option><option value="3">&gt;3 mg/dL</option></select></label>
+            <label>Albumin<select name="albumin"><option value="1">&gt;3.5 g/dL</option><option value="2">2.8–3.5 g/dL</option><option value="3">&lt;2.8 g/dL</option></select></label>
+            <label>INR<select name="inr"><option value="1">&lt;1.7</option><option value="2">1.7–2.3</option><option value="3">&gt;2.3</option></select></label>
+          </div><button type="submit">Calculate</button><p class="calc-result" role="status">Select the five measures.</p>
+          <a class="calc-source" href="https://www.hepatitisc.uw.edu/page/clinical-calculators/ctp" target="_blank" rel="noopener noreferrer">Criteria source &#8599;&#65038;</a>
+        </form>
+
+        <form class="calculator" id="albi-calculator">
+          <h3>ALBI</h3><p>Objective estimate of liver functional reserve using albumin and bilirubin.</p>
+          <div class="calc-fields">
+            <label>Albumin (g/dL)<input name="albumin" type="number" min="0.1" max="8" step="0.1" inputmode="decimal" required></label>
+            <label>Bilirubin (mg/dL)<input name="bilirubin" type="number" min="0.01" max="100" step="0.01" inputmode="decimal" required></label>
+          </div><button type="submit">Calculate</button><p class="calc-result" role="status">Enter current laboratory values.</p>
+          <a class="calc-source" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5645222/" target="_blank" rel="noopener noreferrer">Formula and IR evidence &#8599;&#65038;</a>
+        </form>
+
+        <form class="calculator" id="egfr-calculator">
+          <h3>eGFR · 2021 CKD-EPI</h3><p>Adult creatinine-based kidney-function estimate without a race variable.</p>
+          <div class="calc-fields">
+            <label>Age (years)<input name="age" type="number" min="18" max="120" step="1" inputmode="numeric" required></label>
+            <label>Serum creatinine (mg/dL)<input name="creatinine" type="number" min="0.1" max="30" step="0.01" inputmode="decimal" required></label>
+            <label>Sex used by equation<select name="sex"><option value="female">Female</option><option value="male">Male</option></select></label>
+          </div><button type="submit">Calculate</button><p class="calc-result" role="status">For adults with standardized serum creatinine.</p>
+          <a class="calc-source" href="https://www.kidney.org/ckd-epi-creatinine-equation-2021" target="_blank" rel="noopener noreferrer">National Kidney Foundation equation &#8599;&#65038;</a>
+        </form>
+
+        <form class="calculator" id="recist-calculator">
+          <h3>RECIST 1.1 · size change</h3><p>Educational check of target-lesion sums. Full response assessment needs the entire study.</p>
+          <div class="calc-fields">
+            <label>Baseline sum (mm)<input name="baseline" type="number" min="0.1" step="0.1" inputmode="decimal" required></label>
+            <label>Smallest prior sum (mm)<input name="nadir" type="number" min="0.1" step="0.1" inputmode="decimal" required></label>
+            <label>Current sum (mm)<input name="current" type="number" min="0" step="0.1" inputmode="decimal" required></label>
+          </div><button type="submit">Calculate</button><p class="calc-result" role="status">Uses baseline for partial response and nadir for progression.</p>
+          <a class="calc-source" href="https://recist.eortc.org/recist-1-1/" target="_blank" rel="noopener noreferrer">RECIST 1.1 criteria &#8599;&#65038;</a>
+        </form>
+      </div>
+      <p class="calculator-note"><strong>Use with care.</strong> These outputs are educational and should be verified by a clinician. They do not determine diagnosis, treatment eligibility, contrast safety, transplant priority, or tumor response by themselves. RECIST also considers non-target disease and new lesions. For transplant decisions, use the current <a href="https://www.hrsa.gov/optn/data-calculators/allocation-calculators/meld-calculator" target="_blank" rel="noopener noreferrer">official OPTN MELD calculator</a>.</p>
+    </div>
+  </section>
 
   <article class="patient-article" id="gae">
     <header><p class="section-number">01 / Knee</p><h2>Genicular artery embolization</h2><p class="article-deck">A minimally invasive treatment being used for selected patients with persistent knee pain related to osteoarthritis.</p></header>
@@ -102,5 +153,6 @@
 </main>
 
 <footer><div class="shell footer-grid"><div><p class="section-number">05 / Connect</p><h2>Research.<br>Collaborate. Ask.</h2></div><div class="footer-contact"><p>For research collaborations, academic opportunities, or student guidance.</p><a href="mailto:ahussain8@bwh.harvard.edu">Email Ahmad &#8599;&#65038;</a><div><a href="Ahmad_Hussain_Resume.pdf" download>Résumé</a><a href="mailto:ahussain8@bwh.harvard.edu">Email</a><a href="https://www.linkedin.com/in/ahmad-hussain-md-6a63331b9" target="_blank" rel="noopener noreferrer">LinkedIn</a><a href="https://www.researchgate.net/profile/Ahmad-Hussain-10" target="_blank" rel="noopener noreferrer">ResearchGate</a><a href="https://x.com/ahmadhussainmd" target="_blank" rel="noopener noreferrer">X</a><a href="https://connects.catalyst.harvard.edu/profiles/display/305784934" target="_blank" rel="noopener noreferrer">Harvard Catalyst</a></div></div></div><div class="shell copyright"><span>© 2026 Ahmad Hussain, MD</span><span>Boston, MA</span></div><div class="shell site-traffic" style="padding:0 0 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:13px"><a href="https://hits.sh/ahmadhussainir.github.io/" target="_blank" rel="noopener noreferrer" aria-label="View website traffic statistics"><img src="https://hits.sh/ahmadhussainir.github.io.svg?view=today-total&amp;style=flat-square&amp;label=Page%20views%20today%20%2F%20total&amp;color=222222&amp;labelColor=444444" alt="Website page views today and total" style="height:22px;width:auto;max-width:100%"></a></div></footer>
+<script src="clinical-calculators.js?v=1"></script>
 </body>
 </html>
