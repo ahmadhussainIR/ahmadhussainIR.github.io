@@ -1,14 +1,42 @@
 (function () {
   const BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
-  const TOPIC = '("interventional radiology"[Title/Abstract] OR embolization[Title/Abstract] OR musculoskeletal[Title/Abstract] OR "radiology AI"[Title/Abstract])';
+  const TOPIC = '("interventional radiology"[Title/Abstract] OR embolization[Title/Abstract] OR "transarterial embolization"[Title/Abstract] OR musculoskeletal[Title/Abstract] OR "radiology AI"[Title/Abstract])';
   const JOURNALS = '("J Vasc Interv Radiol"[jour] OR "Cardiovasc Intervent Radiol"[jour] OR "Radiol Artif Intell"[jour] OR "Radiology"[jour] OR "Radiographics"[jour])';
-  const CURATED_GAE = ["42487072", "42118083", "42303879", "42567951", "36991094", "37051829"];
+  const CURATED_GAE = ["42573777", "42009866", "42487072", "42118083", "42303879", "42567951", "36991094", "37051829"];
+  const CURATED_MSK = ["41161413"];
   const CURATED_AI = ["41879561", "41258794", "34136816"];
-  const CURATED_IDS = [...CURATED_GAE, ...CURATED_AI];
-  const CACHE_KEY = "ahmad-radiology-resources-v6";
+  const CURATED_IDS = [...CURATED_GAE, ...CURATED_MSK, ...CURATED_AI];
+  const CACHE_KEY = "ahmad-radiology-resources-v7";
   const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000;
 
   const SEED_ARTICLES = [
+    {
+      uid: "42573777",
+      title: "Genicular artery embolization as a minimally invasive treatment for knee osteoarthritis: systematic review and meta-analysis",
+      source: "Skeletal Radiol",
+      pubdate: "2026 Aug 10",
+      authors: [{ name: "L H Alves" }, { name: "D Barbosa" }, { name: "M C Merighi" }],
+      articleids: [{ idtype: "doi", value: "10.1007/s00256-026-05340-x" }],
+      abstract: "This updated systematic review included 18 studies and 534 patients. Pain and function improved through 12 months, but substantial between-study heterogeneity and recent sham-controlled findings leave uncertainty about the size of the treatment effect. The authors call for standardized techniques, selection criteria, and outcome reporting."
+    },
+    {
+      uid: "42009866",
+      title: "Long-term outcomes of genicular artery embolization for knee osteoarthritis: 12-month efficacy and secondary outcomes from a randomized sham-controlled clinical trial",
+      source: "Eur Radiol",
+      pubdate: "2026 Aug",
+      authors: [{ name: "T A van Zadelhoff" }, { name: "R A van der Heijden" }, { name: "S M A Bierma-Zeinstra" }],
+      articleids: [{ idtype: "doi", value: "10.1007/s00330-026-12505-8" }],
+      abstract: "In this randomized sham-controlled trial of 58 patients with mild-to-moderate knee osteoarthritis, both the GAE and sham groups had sustained pain improvement at 12 months. The between-group difference was not significant, and no significant changes in MRI-assessed synovitis were found. The authors concluded that these results do not support routine clinical implementation for this population."
+    },
+    {
+      uid: "41161413",
+      title: "Transarterial Embolization for Refractory Adhesive Capsulitis and Related Tendinopathies: A Systematic Review and Meta-Analysis",
+      source: "J Vasc Interv Radiol",
+      pubdate: "2026",
+      authors: [{ name: "K Khabaz" }, { name: "A B Patel" }, { name: "O Ahmed" }],
+      articleids: [{ idtype: "doi", value: "10.1016/j.jvir.2025.10.027" }],
+      abstract: "This meta-analysis included 12 single-arm studies and 329 shoulders, most treated for adhesive capsulitis. Pooled results showed improvements in pain, range of motion, and ASES scores through 180 days. Technical success was 100%, and no severe adverse events were reported. The authors noted that uncontrolled study designs, short follow-up, and high heterogeneity limit certainty and support the need for randomized trials."
+    },
     {
       uid: "42487072",
       title: "Genicular Artery Embolization for Chronic Knee Pain: Expert Consensus Recommendations on Indications, Technique and Clinical Care Using a Delphi Process",
@@ -170,11 +198,13 @@
 
   function renderAll(articles) {
     journals.forEach((journal) => render(document.getElementById(journal.id), articles.filter((article) => article.source === journal.source), journal.label));
-    render(document.getElementById("gaeArticles"), CURATED_GAE.map((id) => articles.find((article) => article.uid === id)).filter(Boolean), "GAE essentials", 6);
+    render(document.getElementById("gaeArticles"), CURATED_GAE.map((id) => articles.find((article) => article.uid === id)).filter(Boolean), "GAE essentials", 8);
+    render(document.getElementById("mskArticles"), CURATED_MSK.map((id) => articles.find((article) => article.uid === id)).filter(Boolean), "MSK embolization", 4);
   }
 
   const seeds = mergeArticles([], SEED_ARTICLES);
-  render(document.getElementById("gaeArticles"), CURATED_GAE.map((id) => seeds.find((article) => article.uid === id)).filter(Boolean), "GAE essentials", 6);
+  render(document.getElementById("gaeArticles"), CURATED_GAE.map((id) => seeds.find((article) => article.uid === id)).filter(Boolean), "GAE essentials", 8);
+  render(document.getElementById("mskArticles"), CURATED_MSK.map((id) => seeds.find((article) => article.uid === id)).filter(Boolean), "MSK embolization", 4);
   render(document.getElementById("raiArticles"), seeds.filter((article) => CURATED_AI.includes(article.uid)), "Radiology: AI", 3);
 
   (async function () {
