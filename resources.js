@@ -2,14 +2,18 @@
   const BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
   const TOPIC = '("interventional radiology"[Title/Abstract] OR embolization[Title/Abstract] OR "transarterial embolization"[Title/Abstract] OR musculoskeletal[Title/Abstract] OR "radiology AI"[Title/Abstract])';
   const JOURNALS = '("J Vasc Interv Radiol"[jour] OR "Cardiovasc Intervent Radiol"[jour] OR "Radiol Artif Intell"[jour] OR "Radiology"[jour] OR "Radiographics"[jour])';
-  const CURATED_GAE = ["42573777", "42009866", "42487072", "42118083", "42303879", "42567951", "36991094", "37051829"];
+  const CURATED_GAE = ["42208168", "42573777", "42009866", "42487072", "42118083", "42303879", "42567951", "36991094", "37051829"];
   const CURATED_MSK = ["41161413"];
   const CURATED_AI = ["41879561", "41258794", "34136816"];
-  const CURATED_IDS = [...CURATED_GAE, ...CURATED_MSK, ...CURATED_AI];
-  const CACHE_KEY = "ahmad-radiology-resources-v7";
+  const CURATED_RECENT = ["42763097", "42759602"];
+  const CURATED_IDS = [...CURATED_RECENT, ...CURATED_GAE, ...CURATED_MSK, ...CURATED_AI];
+  const CACHE_KEY = "ahmad-radiology-resources-v8";
   const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000;
 
   const SEED_ARTICLES = [
+{"uid":"42208168","title":"Permanent vs. Temporary embolic agents in genicular artery embolization for knee Osteoarthritis: A systematic review and Meta-Analysis","source":"Eur J Radiol","pubdate":"2026 Sep","authors":[{"name":"E Lanza"},{"name":"D Poretti"},{"name":"V Pedicini"}],"articleids":[{"idtype":"doi","value":"10.1016/j.ejrad.2026.112968"}],"abstract":"A review of 22 studies found improvements from baseline after GAE, but pooled sham-controlled trials did not establish a significant benefit over sham. Observed pain outcomes were similar between embolic classes; the review highlights differences in reported safety outcomes and the need for stronger comparative evidence.","abstractLabel":"Study summary"},
+{"uid":"42763097","title":"Interventional Radiology as the Most Utilized Treatment Specialty for Hepatocellular Carcinoma: A 25-Year Multidisciplinary Analysis at a High-Volume Academic Transplant Center","source":"J Vasc Interv Radiol","pubdate":"2026 Sep 19","authors":[{"name":"A Nadeem"},{"name":"L M Kulik"},{"name":"A Kalyan"}],"articleids":[{"idtype":"doi","value":"10.1016/j.jvir.2026.109089"}],"abstract":"This single-center analysis describes the use of interventional radiology within multidisciplinary hepatocellular carcinoma care over 25 years. It examines the contribution of radioembolization, chemoembolization, and ablation at an academic transplant center.","abstractLabel":"Study summary"},
+{"uid":"42759602","title":"Stepwise Incision-Free Lumen-Calibrated Ligation (SILL): Initial Experience for Flow Modulation in Hemodialysis Arteriovenous Access","source":"J Vasc Interv Radiol","pubdate":"2026 Sep 18","authors":[{"name":"M Kim"},{"name":"H N Lee"},{"name":"S S Kim"}],"articleids":[{"idtype":"doi","value":"10.1016/j.jvir.2026.109088"}],"abstract":"An initial clinical experience with a technique for modifying flow in hemodialysis arteriovenous access. This paper offers a recent vascular-access topic for trainees; its early experience design should be considered when interpreting clinical applicability.","abstractLabel":"Study summary"},
     {
       uid: "42573777",
       title: "Genicular artery embolization as a minimally invasive treatment for knee osteoarthritis: systematic review and meta-analysis",
@@ -170,7 +174,7 @@
       const text = Array.from(record.querySelectorAll("Abstract AbstractText")).map((node) => node.textContent?.trim()).filter(Boolean).join(" ");
       return [id, text];
     }));
-    return ids.map((id) => ({ ...summaryData.result[id], abstract: abstracts.get(id) || "" })).filter((article) => article.uid);
+    return ids.map((id) => ({ ...summaryData.result[id], abstract: abstracts.get(id) || "", abstractLabel: abstracts.get(id) ? "Abstract" : "Study summary" })).filter((article) => article.uid);
   }
 
   function render(target, articles, label, limit = 4) {
@@ -184,7 +188,7 @@
       const abstract = article.abstract || "No abstract is available in PubMed for this article.";
       const doi = (article.articleids || []).find((identifier) => identifier.idtype === "doi")?.value;
       const fullText = doi ? `https://doi.org/${encodeURIComponent(doi)}` : `https://pubmed.ncbi.nlm.nih.gov/${encodeURIComponent(article.uid)}/`;
-      return `<article class="resource-item"><span>${String(index + 1).padStart(2, "0")}</span><div><a href="https://pubmed.ncbi.nlm.nih.gov/${encodeURIComponent(article.uid)}/" target="_blank" rel="noopener noreferrer"><h3>${escapeHtml(article.title)}</h3><p>${escapeHtml(citation)}</p></a><div class="article-abstract"><strong>Abstract</strong><p>${escapeHtml(abstract)}</p></div><div class="article-actions"><a href="https://pubmed.ncbi.nlm.nih.gov/${encodeURIComponent(article.uid)}/" target="_blank" rel="noopener noreferrer">PubMed record \u2197\uFE0E</a><a href="${fullText}" target="_blank" rel="noopener noreferrer">Full text \u2197\uFE0E</a></div></div></article>`;
+      return `<article class="resource-item"><span>${String(index + 1).padStart(2, "0")}</span><div><a href="https://pubmed.ncbi.nlm.nih.gov/${encodeURIComponent(article.uid)}/" target="_blank" rel="noopener noreferrer"><h3>${escapeHtml(article.title)}</h3><p>${escapeHtml(citation)}</p></a><div class="article-abstract"><strong>${escapeHtml(article.abstractLabel || "Study summary")}</strong><p>${escapeHtml(abstract)}</p></div><div class="article-actions"><a href="https://pubmed.ncbi.nlm.nih.gov/${encodeURIComponent(article.uid)}/" target="_blank" rel="noopener noreferrer">PubMed record \u2197\uFE0E</a><a href="${fullText}" target="_blank" rel="noopener noreferrer">Full text \u2197\uFE0E</a></div></div></article>`;
     }).join("");
   }
 
@@ -197,13 +201,15 @@
   ];
 
   function renderAll(articles) {
+    render(document.getElementById("recentArticles"), CURATED_RECENT.map((id) => articles.find((article) => article.uid === id)).filter(Boolean), "Recent IR papers", 2);
     journals.forEach((journal) => render(document.getElementById(journal.id), articles.filter((article) => article.source === journal.source), journal.label));
-    render(document.getElementById("gaeArticles"), CURATED_GAE.map((id) => articles.find((article) => article.uid === id)).filter(Boolean), "GAE essentials", 8);
+    render(document.getElementById("gaeArticles"), CURATED_GAE.map((id) => articles.find((article) => article.uid === id)).filter(Boolean), "GAE essentials", CURATED_GAE.length);
     render(document.getElementById("mskArticles"), CURATED_MSK.map((id) => articles.find((article) => article.uid === id)).filter(Boolean), "MSK embolization", 4);
   }
 
   const seeds = mergeArticles([], SEED_ARTICLES);
-  render(document.getElementById("gaeArticles"), CURATED_GAE.map((id) => seeds.find((article) => article.uid === id)).filter(Boolean), "GAE essentials", 8);
+  renderAll(seeds);
+  render(document.getElementById("gaeArticles"), CURATED_GAE.map((id) => seeds.find((article) => article.uid === id)).filter(Boolean), "GAE essentials", CURATED_GAE.length);
   render(document.getElementById("mskArticles"), CURATED_MSK.map((id) => seeds.find((article) => article.uid === id)).filter(Boolean), "MSK embolization", 4);
   render(document.getElementById("raiArticles"), seeds.filter((article) => CURATED_AI.includes(article.uid)), "Radiology: AI", 3);
 
