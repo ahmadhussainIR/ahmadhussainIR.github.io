@@ -2,15 +2,24 @@
   const BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
   const TOPIC = '("interventional radiology"[Title/Abstract] OR embolization[Title/Abstract] OR "transarterial embolization"[Title/Abstract] OR musculoskeletal[Title/Abstract] OR "radiology AI"[Title/Abstract])';
   const JOURNALS = '("J Vasc Interv Radiol"[jour] OR "Cardiovasc Intervent Radiol"[jour] OR "Radiol Artif Intell"[jour] OR "Radiology"[jour] OR "Radiographics"[jour])';
-  const CURATED_GAE = ["42208168", "42573777", "42009866", "42487072", "42118083", "42303879", "42567951", "36991094", "37051829"];
+  const CURATED_GAE = ["42585691", "42208168", "42573777", "42009866", "42487072", "42118083", "42303879", "42567951", "36991094", "37051829"];
   const CURATED_MSK = ["41161413"];
   const CURATED_AI = ["41879561", "41258794", "34136816"];
-  const CURATED_RECENT = ["42763097", "42759602"];
+  const CURATED_RECENT = ["42585691", "42695787", "42763097", "42759602"];
   const CURATED_IDS = [...CURATED_RECENT, ...CURATED_GAE, ...CURATED_MSK, ...CURATED_AI];
-  const CACHE_KEY = "ahmad-radiology-resources-v8";
+  const CACHE_KEY = "ahmad-radiology-resources-v9";
+  // Keep the portfolio owner's listed publications on Research, not Featured Reads.
+  const EXCLUDED_DOIS = new Set(["10.1055/a-2845-7727", "10.1055/a-2845-7529", "10.1007/s00256-026-05308-x", "10.1007/s00261-025-05006-7", "10.1016/j.jacr.2026.00438", "10.1016/j.jvir.2024.12.494", "10.1093/bjsopen/zrad089"]);
+  const EXCLUDED_TITLES = ["artificial intelligence in radiology: beyond image interpretation", "selecting osteoarthritis patients for genicular artery embolization", "arterial anatomy of the shoulder", "adhesive capsulitis embolization: a narrative review", "cystic genitourinary lesions in the pelvis", "microwave ablation versus resection for colorectal cancer liver metastases", "how long to wait after local infiltration"];
+  function eligible(article) {
+    const title = String(article.title || "").toLowerCase();
+    return !EXCLUDED_TITLES.some(t => title.includes(t)) && !(article.articleids || []).some(x => x.idtype === "doi" && EXCLUDED_DOIS.has(String(x.value).toLowerCase()));
+  }
   const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000;
 
   const SEED_ARTICLES = [
+    {uid:"42585691",title:"Genicular artery embolisation for the management of knee osteoarthritis: a prospective randomised study",source:"Clin Radiol",pubdate:"2026 Oct · online July 4",authors:[{name:"S Kumar"},{name:"S Kumar"},{name:"A Kumar"}],articleids:[{idtype:"doi",value:"10.1016/j.crad.2026.107427"}],abstract:"A randomized study enrolled 50 patients with knee osteoarthritis and compared standard care with standard care plus GAE. Pain and several KOOS domains improved more in the embolization group at 12 months. The comparator was standard care, not a sham procedure, which matters when interpreting treatment effects alongside sham-controlled trials. Reported complications included transient pain exacerbation and vascular or skin-related events.",abstractLabel:"Study summary"},
+    {uid:"42695787",title:"Robotic Needle Insertion for CT-guided Percutaneous Biopsy of Thoracoabdominal Lesions: A Prospective Multicenter Randomized Trial",source:"Radiol Imaging Cancer",pubdate:"2026 Sep",authors:[{name:"H Huang"},{name:"C Chen"},{name:"Y Wang"}],articleids:[{idtype:"doi",value:"10.1148/rycan.260054"}],abstract:"In a three-center randomized trial of 165 participants, robot-assisted biopsy achieved more precise needle placement with fewer adjustments and CT scans than freehand biopsy. Both groups achieved 100% diagnostic yield, and puncture times were comparable. The findings concern the tested robotic system and trial setting, rather than establish a benefit for all robotic biopsy platforms.",abstractLabel:"Study summary"},
 {"uid":"42208168","title":"Permanent vs. Temporary embolic agents in genicular artery embolization for knee Osteoarthritis: A systematic review and Meta-Analysis","source":"Eur J Radiol","pubdate":"2026 Sep","authors":[{"name":"E Lanza"},{"name":"D Poretti"},{"name":"V Pedicini"}],"articleids":[{"idtype":"doi","value":"10.1016/j.ejrad.2026.112968"}],"abstract":"A review of 22 studies found improvements from baseline after GAE, but pooled sham-controlled trials did not establish a significant benefit over sham. Observed pain outcomes were similar between embolic classes; the review highlights differences in reported safety outcomes and the need for stronger comparative evidence.","abstractLabel":"Study summary"},
 {"uid":"42763097","title":"Interventional Radiology as the Most Utilized Treatment Specialty for Hepatocellular Carcinoma: A 25-Year Multidisciplinary Analysis at a High-Volume Academic Transplant Center","source":"J Vasc Interv Radiol","pubdate":"2026 Sep 19","authors":[{"name":"A Nadeem"},{"name":"L M Kulik"},{"name":"A Kalyan"}],"articleids":[{"idtype":"doi","value":"10.1016/j.jvir.2026.109089"}],"abstract":"This single-center analysis describes the use of interventional radiology within multidisciplinary hepatocellular carcinoma care over 25 years. It examines the contribution of radioembolization, chemoembolization, and ablation at an academic transplant center.","abstractLabel":"Study summary"},
 {"uid":"42759602","title":"Stepwise Incision-Free Lumen-Calibrated Ligation (SILL): Initial Experience for Flow Modulation in Hemodialysis Arteriovenous Access","source":"J Vasc Interv Radiol","pubdate":"2026 Sep 18","authors":[{"name":"M Kim"},{"name":"H N Lee"},{"name":"S S Kim"}],"articleids":[{"idtype":"doi","value":"10.1016/j.jvir.2026.109088"}],"abstract":"An initial clinical experience with a technique for modifying flow in hemodialysis arteriovenous access. This paper offers a recent vascular-access topic for trainees; its early experience design should be considered when interpreting clinical applicability.","abstractLabel":"Study summary"},
@@ -142,7 +151,7 @@
       if (!article.abstract && seeded?.abstract) merged.abstract = seeded.abstract;
       articles.set(article.uid, merged);
     });
-    return Array.from(articles.values());
+    return Array.from(articles.values()).filter(eligible);
   }
 
   async function getArticles(daysAgo) {
@@ -178,6 +187,8 @@
   }
 
   function render(target, articles, label, limit = 4) {
+    if (!target) return;
+    articles = articles.filter(eligible);
     if (!articles.length) {
       target.innerHTML = `<p class="resource-empty">No new matching papers were indexed this week in ${label}. <a href="https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(`${TOPIC} AND ${JOURNALS}`)}" target="_blank" rel="noopener noreferrer">Browse the journal literature on PubMed \u2197\uFE0E</a></p>`;
       return;
@@ -201,7 +212,7 @@
   ];
 
   function renderAll(articles) {
-    render(document.getElementById("recentArticles"), CURATED_RECENT.map((id) => articles.find((article) => article.uid === id)).filter(Boolean), "Recent IR papers", 2);
+    render(document.getElementById("recentArticles"), CURATED_RECENT.map((id) => articles.find((article) => article.uid === id)).filter(Boolean), "Recent IR papers", 4);
     journals.forEach((journal) => render(document.getElementById(journal.id), articles.filter((article) => article.source === journal.source), journal.label));
     render(document.getElementById("gaeArticles"), CURATED_GAE.map((id) => articles.find((article) => article.uid === id)).filter(Boolean), "GAE essentials", CURATED_GAE.length);
     render(document.getElementById("mskArticles"), CURATED_MSK.map((id) => articles.find((article) => article.uid === id)).filter(Boolean), "MSK embolization", 4);
@@ -222,7 +233,7 @@
       renderAll(articles);
     } catch (error) {
       const fallback = `<p class="resource-empty">The weekly journal feed is temporarily unavailable. <a href="https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(`${TOPIC} AND ${JOURNALS}`)}" target="_blank" rel="noopener noreferrer">Browse matching articles on PubMed \u2197\uFE0E</a></p>`;
-      journals.filter((journal) => journal.id !== "raiArticles").forEach((journal) => { document.getElementById(journal.id).innerHTML = fallback; });
+      journals.filter((journal) => !seeds.some(article => article.source === journal.source)).forEach((journal) => { const target = document.getElementById(journal.id); if (target) target.innerHTML = fallback; });
     }
   }());
 }());
